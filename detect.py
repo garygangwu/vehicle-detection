@@ -23,12 +23,13 @@ def load_svc_models():
 
 def process_image_v1(model_profiles, image, debug = False):
 
+  x_start_stop=[None, None]
   y_start_stop1, y_start_stop2, y_start_stop3 = [400, 650], [400, 600], [400, 550]
-  windows_1 = slide_window(image, x_start_stop=[None, None], y_start_stop=y_start_stop1,
+  windows_1 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop1,
                         xy_window=(128, 128), xy_overlap=(0.75, 0.75))
-  windows_2 = slide_window(image, x_start_stop=[None, None], y_start_stop=y_start_stop2,
+  windows_2 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop2,
                         xy_window=(96, 96), xy_overlap=(0.75, 0.75))
-  windows_3 = slide_window(image, x_start_stop=[None, None], y_start_stop=y_start_stop3,
+  windows_3 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop3,
                         xy_window=(64, 64), xy_overlap=(0.75, 0.75))
   windows = windows_1 + windows_2 + windows_3
 
@@ -79,38 +80,27 @@ def process_image_v2(model_profiles, image, debug = False):
 
 def evaluate(model_profiles, image):
   draw_img_1, heatmap_1, hot_windows_1 = process_image_v1(model_profiles, image, debug = True)
-  draw_img_2, heatmap_2, hot_windows_2 = process_image_v2(model_profiles, image, debug = True)
+  #draw_img_2, heatmap_2, hot_windows_2 = process_image_v2(model_profiles, image, debug = True)
 
-  fig = plt.figure()
-  plt.subplot(331)
+  fig = plt.figure(figsize=(18, 4))
+  plt.subplot(131)
   plt.imshow(draw_img_1)
-  plt.title('v1')
-  plt.subplot(332)
+  plt.title('Final Output')
+  plt.subplot(132)
   plt.imshow(heatmap_1, cmap='hot')
-  plt.title('Heat Map v1')
-  plt.subplot(333)
-  plt.imshow(draw_boxes(image, hot_windows_1))
-  plt.title('boxes v1')
-  plt.subplot(334)
-  plt.imshow(draw_img_2)
-  plt.title('v2')
-  fig.tight_layout()
-  plt.subplot(335)
-  plt.imshow(heatmap_2, cmap='hot')
-  plt.title('Heat Map v2')
-  plt.subplot(336)
-  plt.imshow(draw_boxes(image, hot_windows_2))
-  plt.title('boxes')
+  plt.title('Heat Map')
+  plt.subplot(133)
+  plt.imshow(draw_boxes(image, hot_windows_1, color=(0, 0, 255), thick=6))
+  plt.title('Windows')
   fig.tight_layout()
   plt.show()
 
 
 def evaluate_all_models():
-  model_profiles = load_svc_models()
+  model_profiles = [ load_svc_models()['YCrCb'] ]
   for filename in glob.glob('test_images/*.jpg'):
     image = mpimg.imread(filename)
-    for color_space, model_profile in model_profiles.iteritems():
-      evaluate(model_profile, image)
+    evaluate(model_profiles, image)
 
 
 def video(filename):
