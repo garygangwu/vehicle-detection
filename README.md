@@ -88,4 +88,21 @@ Next, I found the color space is one of most effective lever to improve the trai
 |YUV|0.9870|
 |<b>YCrCb</b>|<b>0.9884</b>|
 
-## Sliding Window Search
+## Vehicle Detection
+
+### Sliding Window Search
+I break the image into 3 sections on Y axis: [400, 650], [400, 600], and [400, 550], which are corresponding to the `xy_window` of (128, 128), (96, 96), and (64, 64). `xy_overlap` is (0.75, 0.75), which means 75% overlap between neighbor sliding windows.
+
+<img src="demo/sliding_window_demo.jpg" />
+
+### Improve Detection Accurancy
+
+1. To minimize the false positive, I filtered out the postive prediction with low confidence scores by calling `svc.decision_function`. Empirically, I set the threshold as 1.0.
+```
+def model_prediction(svc, test_features):
+  scores = svc.decision_function(test_features)
+  prediction = svc.predict(test_features)
+  if prediction == 1:
+    return scores[0] > PREDICTION_THRESH:
+  return 0
+```
