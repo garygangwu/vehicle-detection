@@ -148,5 +148,6 @@ The final video is available in [this github link (project_video.mp4)](https://g
 
 ## Discussion
 
+* The stability and tightness of the bounding boxes may need more improvements. It will require further exploration of hyperparameters or more training data to improve the prediction accurancy.
 * The performance is a concern. Using SVM classifier takes a quite while for processing each image. The further performance tuning may be needed to apply this approach into the production. 
 * Yolo v2 and Fast R-CNN are the most popular deep learning approaches for object detection. The performance is reasonable fast. So they might be better alternatives to the traditional SVM classifier.
