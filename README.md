@@ -44,10 +44,10 @@ In addition, I found the color space is one of most effective lever to improve t
 
 |Color Space|Test Accuracy|
 |:---:|:---:|
-|HSV|0.985078828829|
-|LUV orientations|0.987612612613|
-|HLS|0.981981981982|
-|YUV|0.98704954955|
-|YCrCb|0.988457207207|
+|HSV|0.9850|
+|LUV|0.9876|
+|HLS|0.9819|
+|YUV|0.9870|
+|YCrCb|0.9884|
 
 The training code is located in [train.py](https://github.com/garygangwu/vehicle-detection/blob/master/train.py) and [feature_utils.py](https://github.com/garygangwu/vehicle-detection/blob/master/feature_utils.py). 
