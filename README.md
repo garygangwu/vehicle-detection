@@ -90,6 +90,15 @@ Next, I found the color space is one of most effective lever to improve the trai
 
 ## Vehicle Detection
 
+### Detection pipeline
+
+Here is a short summary of pipeline for car detection
+
+* Use the sliding window technique to capture all image windows for car detection
+* Run the linear SVM classifier to check if the image window is a car or not
+* Generate the heatmap and apply the threashold to remove false positives
+* Merge the overlapped detected window and draw the bounding boxes
+
 ### Sliding Window Search
 I break the image into 3 sections on Y axis: [400, 650], [400, 600], and [400, 550], which are corresponding to the `xy_window` of (128, 128), (96, 96), and (64, 64). `xy_overlap` is (0.75, 0.75), which means 75% overlap between neighbor sliding windows.
 
@@ -107,4 +116,26 @@ def model_prediction(svc, test_features):
   return 0
 ```
 
-2. Detect hot windows
+2. Apply the heatmaps and threashold
+Heat-map is built to combine overlapping detections and remove false positives. To reject areas affected by false positives, I applied the threadhold of 2, which means at least 3 overlapped detected windows can be considered as the car areas.
+
+```
+  heatmap = np.zeros_like(image[:, :, 0])
+  heatmap = add_heat(heatmap, hot_windows)
+  heatmap = apply_threshold(heatmap, 2)
+  heatmap = np.clip(heatmap, 0, 255)
+  labels = label(heatmap)
+  draw_img = draw_labeled_bboxes(np.copy(image), labels)
+```
+
+Here are examples of the dectected windows, heatmap, and the final output images.
+
+<img src="demo/test_1.jpg" />
+<img src="demo/test_2.jpg" />
+<img src="demo/test_3.jpg" />
+<img src="demo/test_4.jpg" />
+<img src="demo/test_5.jpg" />
+<img src="demo/test_6.jpg" />
+<img src="demo/test_7.jpg" />
+<img src="demo/test_8.jpg" />
+
