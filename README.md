@@ -42,16 +42,6 @@ I tried various combinations of parameters, and finalized the parameters as belo
 |spatial size| (32, 32)|
 |Number of histogram bins|32|
 
-In addition, I found the color space is one of most effective lever to improve the training accurancy. Among the color space explored, `YCrCb` is standed out with highest accurancy in the test results.
-
-|Color Space|Test Accuracy|
-|:---:|:---:|
-|HSV|0.9850|
-|LUV|0.9876|
-|HLS|0.9819|
-|YUV|0.9870|
-|<b>YCrCb</b>|<b>0.9884</b>|
-
 ## Train the Linear SVM Classifier
 
 The training code is located in [train.py](https://github.com/garygangwu/vehicle-detection/blob/master/train.py) and [feature_utils.py](https://github.com/garygangwu/vehicle-detection/blob/master/feature_utils.py). 
@@ -87,3 +77,15 @@ The training code is located in [train.py](https://github.com/garygangwu/vehicle
     svc.fit(X_train, y_train)
     accuracy = svc.score(X_test, y_test)
 ```
+
+Next, I found the color space is one of most effective lever to improve the training accurancy. Among the color space explored, `YCrCb` is standed out with highest accurancy in the test results.
+
+|Color Space|Test Accuracy|
+|:---:|:---:|
+|HSV|0.9850|
+|LUV|0.9876|
+|HLS|0.9819|
+|YUV|0.9870|
+|<b>YCrCb</b>|<b>0.9884</b>|
+
+## Sliding Window Search
