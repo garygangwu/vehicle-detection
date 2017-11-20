@@ -94,8 +94,8 @@ Next, I found the color space is one of most effective lever to improve the trai
 
 Here is a short summary of pipeline for car detection
 
-* Use the sliding window technique to capture all image windows for car detection
-* Run the linear SVM classifier to check if the image window is a car or not
+* Use the sliding window technique to capture image windows for car detection
+* Run the linear SVM classifier to check whether each image window is a car or not
 * Generate the heatmap and apply the threashold to remove false positives
 * Merge the overlapped detected window and draw the bounding boxes
 
@@ -139,3 +139,14 @@ Here are examples of the dectected windows, heatmap, and the final output images
 <img src="demo/test_7.jpg" />
 <img src="demo/test_8.jpg" />
 
+---
+
+## Video Implementation
+The final video is available in [this github link (project_video.mp4)](https://github.com/garygangwu/vehicle-detection/blob/master/output_videos/project_video.mp4)
+
+---
+
+## Discussion
+
+* The performance is a concern. Using SVM classifier takes a quite while for processing each image. The further performance tuning may be needed to apply this approach into the production. 
+* Yolo v2 and Fast R-CNN are the most popular deep learning approaches for object detection. The performance is reasonable fast. So they might be better alternatives to the traditional SVM classifier.
