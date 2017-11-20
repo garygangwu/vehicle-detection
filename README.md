@@ -19,3 +19,5 @@ The training code is located in [train.py](https://github.com/garygangwu/vehicle
 
 ### Histogram of Oriented Gradients (HOG)
 HOG records the distribution ( histograms ) of directions of gradients ( oriented gradients ) in each image block. I used  `skimage.feature.hog` ([code](https://github.com/garygangwu/vehicle-detection/blob/master/feature_utils.py#L10)) to extract Histogram of Oriented Gradients (HOG).
+
+Here are example in my training using the YCrCb color space and HOG parameters of orientations=9, pixels_per_cell=(8, 8) and cells_per_block=(2, 2)
