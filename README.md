@@ -103,6 +103,8 @@ def model_prediction(svc, test_features):
   scores = svc.decision_function(test_features)
   prediction = svc.predict(test_features)
   if prediction == 1:
-    return scores[0] > PREDICTION_THRESH:
+    return scores[0] > PREDICTION_THRESH
   return 0
 ```
+
+2. Detect hot windows
