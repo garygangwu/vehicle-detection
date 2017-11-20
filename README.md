@@ -48,6 +48,6 @@ In addition, I found the color space is one of most effective lever to improve t
 |LUV|0.9876|
 |HLS|0.9819|
 |YUV|0.9870|
-|YCrCb|0.9884|
+|<b>YCrCb</b>|<b>0.9884</b>|
 
 The training code is located in [train.py](https://github.com/garygangwu/vehicle-detection/blob/master/train.py) and [feature_utils.py](https://github.com/garygangwu/vehicle-detection/blob/master/feature_utils.py). 
