@@ -18,4 +18,4 @@ The training code is located in [train.py](https://github.com/garygangwu/vehicle
 |not-vehicles|<img src="demo/noncar1.jpeg"/><img src="demo/noncar2.jpeg"/><img src="demo/noncar3.png"/><img src="demo/noncar4.jpeg"/><img src="demo/noncar5.png"/><img src="demo/noncar6.png"/><img src="demo/noncar7.png"/><img src="demo/noncar8.png"/><img src="demo/noncar9.png"/><img src="demo/noncar10.png"/>|
 
 ### Histogram of Oriented Gradients (HOG)
-
+HOG records the distribution ( histograms ) of directions of gradients ( oriented gradients ) in each image block. I used  `skimage.feature.hog` ([code](https://github.com/garygangwu/vehicle-detection/blob/master/feature_utils.py#L10)) to extract Histogram of Oriented Gradients (HOG).
