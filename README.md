@@ -152,7 +152,7 @@ Here are examples of the dectected windows, heatmap, and the final output images
 ## Video Implementation
 The final video is available in [this github link (project_video.mp4)](https://github.com/garygangwu/vehicle-detection/blob/master/output_videos/project_video.mp4)
 
-Here is the youtube link
+Here is [the youtube link](https://www.youtube.com/watch?v=5jJTe8nzIkI)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=5jJTe8nzIkI" target="_blank"><img src="http://img.youtube.com/vi/5jJTe8nzIkI/0.jpg" alt="Project Video" width="240" height="180" border="10" /></a>
 
