@@ -3,6 +3,7 @@ import pickle
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import scipy.misc
 from scipy.ndimage.measurements import label
 from moviepy.editor import VideoFileClip
 from feature_utils import *
@@ -21,51 +22,71 @@ def load_svc_models():
   return svc_model_profiles
 
 
-def process_image_v1(model_profiles, image, debug = False):
+output_fold = 'output_videos/'
+x = 0
+def save_fig(name, image):
+  global x
+  if '0_' in name:
+    x += 1
+  filename = output_fold + name + '_' + str(x) + '.jpg'
+  scipy.misc.imsave(filename, image)
 
-  x_start_stop=[None, None]
-  y_start_stop1, y_start_stop2, y_start_stop3 = [400, 650], [400, 600], [400, 550]
+
+def process_image_v1(model_profile, image, debug = False):
+
+  x_start_stop=[640, 1280]
+  y_start_stop0, y_start_stop1, y_start_stop2, y_start_stop3, y_start_stop4= \
+    [390, 650], [390, 650], [390, 550], [360, 500], [360, 470]
+  windows_0 = slide_window(image, x_start_stop=[900, 1280], y_start_stop=y_start_stop0,
+                        xy_window=(256, 256), xy_overlap=(0.9, 0.9))
   windows_1 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop1,
-                        xy_window=(128, 128), xy_overlap=(0.75, 0.75))
+                        xy_window=(144, 144), xy_overlap=(0.9, 0.9))
   windows_2 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop2,
-                        xy_window=(96, 96), xy_overlap=(0.75, 0.75))
+                        xy_window=(96, 96), xy_overlap=(0.9, 0.9))
   windows_3 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop3,
-                        xy_window=(64, 64), xy_overlap=(0.75, 0.75))
-  windows = windows_1 + windows_2 + windows_3
+                        xy_window=(72, 72), xy_overlap=(0.9, 0.9))
+  windows_4 = slide_window(image, x_start_stop=[800, 1100], y_start_stop=y_start_stop3,
+                        xy_window=(64, 64), xy_overlap=(0.9, 0.9))
+  windows = windows_0 + windows_1 + windows_2 + windows_3 + windows_4
 
-  hot_windows = list(windows) # make a copy
-  for model_profile in model_profiles:
-    hot_window_candidates = search_windows(image, windows,
-                                           model_profile['model'],
-                                           model_profile['X_scaler'],
-                                           model_profile['params'])
-    hot_windows = list(set(hot_windows) & set(hot_window_candidates))
+  hot_windows = search_windows(image, windows,
+                               model_profile['model'],
+                               model_profile['X_scaler'],
+                               model_profile['params'])
+
+  addition_weighted_windows = []
+  for hot_window in hot_windows:
+    if hot_window in windows_0:
+      addition_weighted_windows.append(hot_window)
+      addition_weighted_windows.append(hot_window)
+      addition_weighted_windows.append(hot_window)
+  hot_windows += addition_weighted_windows
+
+  save_fig('0_original', image)
+  save_fig('3_hot_windows', draw_boxes(image, hot_windows, color=(0, 255, 0), thick=2))
 
   heatmap = np.zeros_like(image[:, :, 0])
   heatmap = add_heat(heatmap, hot_windows)
-  heatmap = apply_threshold(heatmap, 2)
+  heatmap = apply_threshold(heatmap, 8)
   heatmap = np.clip(heatmap, 0, 255)
 
   labels = label(heatmap)
   draw_img = draw_labeled_bboxes(np.copy(image), labels)
+
+  save_fig('4_heatmap', heatmap)
+  save_fig('5_output', draw_img)
 
   if debug:
     return draw_img, heatmap, hot_windows
   return draw_img
 
 
-def process_image_v2(model_profiles, image, debug = False):
+def process_image_v2(model_profile, image, debug = False):
   y_start_stop = [390, 645] # Min and max in y to search in slide_window()
-  hot_windows = None
-  for model_profile in model_profiles:
-    hot_window_candidates = find_car_windows(image, y_start_stop[0], y_start_stop[1],
-                                             model_profile['model'],
-                                             model_profile['X_scaler'],
-                                             model_profile['params'])
-    if hot_windows == None:
-      hot_windows = hot_window_candidates
-    else:
-      hot_windows = list(set(hot_windows) & set(hot_window_candidates))
+  hot_windows = find_car_windows(image, y_start_stop[0], y_start_stop[1],
+                                 model_profile['model'],
+                                 model_profile['X_scaler'],
+                                 model_profile['params'])
   heatmap = np.zeros_like(image[:, :, 0])
   heatmap = add_heat(heatmap, hot_windows)
   heatmap = apply_threshold(heatmap, 2)
@@ -78,9 +99,9 @@ def process_image_v2(model_profiles, image, debug = False):
   return draw_img
 
 
-def evaluate(model_profiles, image):
-  draw_img_1, heatmap_1, hot_windows_1 = process_image_v1(model_profiles, image, debug = True)
-  #draw_img_2, heatmap_2, hot_windows_2 = process_image_v2(model_profiles, image, debug = True)
+def evaluate(model_profile, image):
+  draw_img_1, heatmap_1, hot_windows_1 = process_image_v1(model_profile, image, debug = True)
+  #draw_img_2, heatmap_2, hot_windows_2 = process_image_v2(model_profile, image, debug = True)
 
   fig = plt.figure(figsize=(18, 4))
   plt.subplot(131)
@@ -97,26 +118,52 @@ def evaluate(model_profiles, image):
 
 
 def evaluate_all_models():
-  model_profiles = [ load_svc_models()['YCrCb'] ]
+  model_profile = load_svc_models()['YCrCb']
   for filename in glob.glob('test_images/*.jpg'):
     image = mpimg.imread(filename)
-    evaluate(model_profiles, image)
+    evaluate(model_profile, image)
 
 
 def video(filename):
   clip = VideoFileClip(filename)
-  model_profiles = [ load_svc_models()['YCrCb'] ] # load_svc_models()['YUV']
-  convert_image = lambda image: process_image_v1(model_profiles, image)
+  model_profile = load_svc_models()['YCrCb']
+  convert_image = lambda image: process_image_v1(model_profile, image)
   new_clip = clip.fl_image(convert_image)
   output_file = 'output_videos/' + filename
   new_clip.write_videofile(output_file, audio=False)
 
 
 def image(filename, color):
-  model_profiles = [ load_svc_models()[color] ]
+  global output_fold
+  output_fold = 'output_images/'
+  model_profile = load_svc_models()[color]
   image = mpimg.imread(filename)
-  evaluate(model_profiles, image)
+  print image.shape, image.dtype
+  evaluate(model_profile, image)
 
+
+debug_image_filenames = [
+  'output_videos/0_original_717.jpg',
+  'output_videos/0_original_719.jpg',
+  'output_videos/0_original_722.jpg',
+  'output_videos/0_original_725.jpg',
+  'output_videos/0_original_728.jpg',
+  'output_videos/0_original_731.jpg',
+  'output_videos/0_original_168.jpg',
+  'output_videos/0_original_156.jpg',
+  'output_videos/0_original_183.jpg',
+  'output_videos/0_original_746.jpg',
+  'output_videos/0_original_682.jpg',
+  'output_videos/0_original_888.jpg',
+  'output_videos/0_original_1019.jpg',
+  'output_videos/0_original_1150.jpg',
+  'output_videos/0_original_1138.jpg',
+  'output_videos/0_original_1224.jpg',
+  'output_videos/0_original_1254.jpg',
+  'output_videos/0_original_1253.jpg',
+  'output_videos/0_original_1260.jpg',
+  'output_videos/0_original_1261.jpg'
+]
 
 def main(mode, argv):
   if mode == 'evaluate':
@@ -125,18 +172,22 @@ def main(mode, argv):
     color = argv[0]
     filename = argv[1]
     image(filename, color)
+  elif mode == 'images':
+    color = argv[0]
+    for filename in debug_image_filenames:
+      print filename
+      image(filename, color)
   elif mode == 'video':
     filename = argv[0]
     video(filename)
   else:
-    print "Usage: python detect.py evaluate | image color filename | video filename"
+    print "Usage: python detect.py evaluate | image color filename | video filename | images"
 
 
 if __name__ == "__main__":
-  accept_modes = ['evaluate', 'image', 'video']
-  mode = 'evaluate'
+  accept_modes = ['evaluate', 'image', 'video', 'images']
   if len(sys.argv) >= 2:
     mode = sys.argv[1]
-    if not mode in accept_modes:
-      mode = 'evaluate'
+  else:
+    mode = 'evaluate'
   main(mode, sys.argv[2:])

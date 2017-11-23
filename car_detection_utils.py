@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from feature_utils import *
 
-PREDICTION_THRESH = 1.
+PREDICTION_THRESH = 1.0
 
 # Define a function to draw bounding boxes
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):

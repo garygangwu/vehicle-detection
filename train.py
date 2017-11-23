@@ -17,15 +17,21 @@ def read_image(image_file):
 
 
 def load_image_data():
-  car_image_files = glob.glob('vehicles/**/*.png')
-  notcar_image_files = glob.glob('non-vehicles/**/*.png')
+  car_image_files = glob.glob('vehicles/**/*.png') + glob.glob('vehicles/**/*.jpg')
+  notcar_image_files = glob.glob('non-vehicles/**/*.png') + glob.glob('non-vehicles/**/*.jpg')
 
   cars = []
   for image_file in car_image_files:
-    cars.append(read_image(image_file))
+    img = read_image(image_file)
+    assert img.dtype == np.uint8
+    assert img.shape == (64,64,3)
+    cars.append(img)
   notcars = []
   for image_file in notcar_image_files:
-    notcars.append(read_image(image_file))
+    img = read_image(image_file)
+    assert img.dtype == np.uint8
+    assert img.shape == (64,64,3)
+    notcars.append(img)
   print "{} cars, and {} not-cars".format(len(cars), len(notcars))
   return cars, notcars
 
@@ -93,7 +99,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(
       scaled_X, y, test_size=0.2, random_state=rand_state)
 
-    svc = LinearSVC()
+    svc = LinearSVC(C = 0.001)
     svc.fit(X_train, y_train)
 
     # Check the accuracy score of the SVC
