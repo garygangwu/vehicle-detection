@@ -73,7 +73,7 @@ The training code is located in [train.py](https://github.com/garygangwu/vehicle
 
 4. Training with LinearSVM classifier and evaluate the results
 ```
-    svc = LinearSVC()
+    svc = LinearSVC(C = 0.001)
     svc.fit(X_train, y_train)
     accuracy = svc.score(X_test, y_test)
 ```
@@ -100,7 +100,7 @@ Here is a short summary of pipeline for car detection
 * Merge the overlapped detected window and draw the bounding boxes
 
 ### Sliding Window Search
-I break the image into 3 sections on Y axis: [400, 650], [400, 600], and [400, 550], which are corresponding to the `xy_window` of (128, 128), (96, 96), and (64, 64). `xy_overlap` is (0.75, 0.75), which means 75% overlap between neighbor sliding windows.
+I break the image into 4 sections on Y axis: [390, 650], [390, 650], [390, 550], and [360, 500], which are corresponding to the `xy_window` of (256, 256), (144, 144), (96, 96), and (72, 72). `xy_overlap` is (0.9, 0.9), which means 90% overlap between neighbor sliding windows.
 
 <img src="demo/sliding_window_demo.jpg" />
 
@@ -116,7 +116,10 @@ def model_prediction(svc, test_features):
   return 0
 ```
 
-2. Apply the heatmaps and threashold
+2. SVM C parameter Optimization
+`C parameter` imforms the SVM optimization how much I want to avoid misclassifying each training example. It serves a trade-off between achieving a low training error at the train time vs. a low testing error on unseen data. To minimize the overfitting and avoid false postive, I picked a tiny C parameter, `0.001`, to impove the confidence of the prediction of the car images.
+
+3. Apply the heatmaps and threashold
 Heat-map is built to combine overlapping detections and remove false positives. To reject areas affected by false positives, I applied the threadhold of 2, which means at least 3 overlapped detected windows can be considered as the car areas.
 
 ```
