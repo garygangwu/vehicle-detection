@@ -29,7 +29,7 @@ def save_fig(name, image):
   if '0_' in name:
     x += 1
   filename = output_fold + name + '_' + str(x) + '.jpg'
-  scipy.misc.imsave(filename, image)
+  #scipy.misc.imsave(filename, image)
 
 
 def process_image_v1(model_profile, image, debug = False):
@@ -115,6 +115,7 @@ def evaluate(model_profile, image):
   plt.title('Windows')
   fig.tight_layout()
   plt.show()
+  #plt.savefig('demo/test.jpg')
 
 
 def evaluate_all_models():
