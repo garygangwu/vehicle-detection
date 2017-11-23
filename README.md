@@ -138,7 +138,6 @@ Heat-map is built to combine overlapping detections and remove false positives. 
 Here are examples of the dectected windows, heatmap, and the final output images.
 
 <img src="demo/test_1.jpg" />
-<img src="demo/test_2.jpg" />
 <img src="demo/test_3.jpg" />
 <img src="demo/test_4.jpg" />
 <img src="demo/test_5.jpg" />
@@ -156,6 +155,16 @@ Here is [the youtube link](https://www.youtube.com/watch?v=5jJTe8nzIkI)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=5jJTe8nzIkI" target="_blank"><img src="http://img.youtube.com/vi/5jJTe8nzIkI/0.jpg" alt="Project Video" width="240" height="180" border="10" /></a>
 
+
+---
+
+## Files
+
+* train.py: the main program to train the model
+* detect.py: the main program to indentify cars in the images or videos
+* feature_utils.py: utility library for feature extraction and process (e.g. HOG)
+* car_detection_utils.py: utility library for car detection (e.g. sliding windows, searching cars in the windows)
+* svc_YCrCb_model.p: SVC training model based on YCrCb color transformation along with the training parameters and the scaler instance
 
 ---
 
