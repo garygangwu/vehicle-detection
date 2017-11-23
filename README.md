@@ -116,16 +116,20 @@ def model_prediction(svc, test_features):
   return 0
 ```
 
-2. SVM C parameter Optimization
+2. <b>SVM C parameter Optimization:</b>
 `C parameter` imforms the SVM optimization how much I want to avoid misclassifying each training example. It serves a trade-off between achieving a low training error at the train time vs. a low testing error on unseen data. To minimize the overfitting and avoid false postive, I picked a tiny C parameter, `0.001`, to impove the confidence of the prediction of the car images.
 
-3. Apply the heatmaps and threashold
-Heat-map is built to combine overlapping detections and remove false positives. To reject areas affected by false positives, I applied the threadhold of 2, which means at least 3 overlapped detected windows can be considered as the car areas.
+3. <b>Apply a high density of sliding windows:</b> It is unavoidable to have false postives, but the false postives are spontaneous. This means if moving the window a little bit, the detection algorithm will not new image window consider it as cars. However, if it is a really car, moving the window a little bit will still generate a postive prediction result. Therefore, with a high density of sliding windows, more windows will detect the acutal cars, while false postive windows are very limited. As a result, we can easily apply a high threadhold of overlapped the windows to indicate the true prediction. Below is an example that there is one false postive window but was removed applying an overlapped window threshold
+
+<img src="demo/test_7.jpg" />
+
+4. <b>Apply the heatmaps and a high threashold:</b>
+Heat-map is built to combine overlapping detections and remove false positives. To reject areas affected by false positives, I applied the threadhold of 8, which means at least 9 overlapped detected windows can be considered as the car areas.
 
 ```
   heatmap = np.zeros_like(image[:, :, 0])
   heatmap = add_heat(heatmap, hot_windows)
-  heatmap = apply_threshold(heatmap, 2)
+  heatmap = apply_threshold(heatmap, 8)
   heatmap = np.clip(heatmap, 0, 255)
   labels = label(heatmap)
   draw_img = draw_labeled_bboxes(np.copy(image), labels)
@@ -139,7 +143,6 @@ Here are examples of the dectected windows, heatmap, and the final output images
 <img src="demo/test_4.jpg" />
 <img src="demo/test_5.jpg" />
 <img src="demo/test_6.jpg" />
-<img src="demo/test_7.jpg" />
 <img src="demo/test_8.jpg" />
 
 ---
