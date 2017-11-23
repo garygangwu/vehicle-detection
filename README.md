@@ -106,7 +106,7 @@ I break the image into 4 sections on Y axis: [390, 650], [390, 650], [390, 550],
 
 ### Improve Detection Accurancy
 
-1. To minimize the false positive, I filtered out the postive prediction with low confidence scores by calling `svc.decision_function`. Empirically, I set the threshold as 1.0.
+1. To minimize the false positive, I <b>filtered out the postive prediction with low confidence scores</b> by calling `svc.decision_function`. Empirically, I set the threshold as 1.0.
 ```
 def model_prediction(svc, test_features):
   scores = svc.decision_function(test_features)
@@ -119,7 +119,7 @@ def model_prediction(svc, test_features):
 2. <b>SVM C parameter Optimization:</b>
 `C parameter` imforms the SVM optimization how much I want to avoid misclassifying each training example. It serves a trade-off between achieving a low training error at the train time vs. a low testing error on unseen data. To minimize the overfitting and avoid false postive, I picked a tiny C parameter, `0.001`, to impove the confidence of the prediction of the car images.
 
-3. <b>Apply a high density of sliding windows:</b> It is unavoidable to have false postives, but the false postives are spontaneous. This means if moving the window a little bit, the detection algorithm will not new image window consider it as cars. However, if it is a really car, moving the window a little bit will still generate a postive prediction result. Therefore, with a high density of sliding windows, more windows will detect the acutal cars, while false postive windows are very limited. As a result, we can easily apply a high threadhold of overlapped the windows to indicate the true prediction. Below is an example that there is one false postive window but was removed applying an overlapped window threshold
+3. <b>Apply a high density of sliding windows:</b> It is unavoidable to have false postives, but the false postives are spontaneous. This means if moving the window a little bit, the detection algorithm will not new image window consider it as cars. However, if it is a really car, moving the window a little bit will still generate a postive prediction result. Therefore, with a high density of sliding windows, more windows will detect the acutal cars, while false postive windows are very limited. Empirically, I set the overlap window as 0.9, meaning 90% overlap between neighbor sliding windows. As a result, we can easily apply a high threadhold of overlapped the windows to indicate the true prediction. Below is an example that there is one false postive window but was removed applying an overlapped window threshold
 
 <img src="demo/test_7.jpg" />
 
@@ -145,15 +145,22 @@ Here are examples of the dectected windows, heatmap, and the final output images
 <img src="demo/test_6.jpg" />
 <img src="demo/test_8.jpg" />
 
+5. <b>More training data:</b> To further get rid of the false positives, I have manually chop the images and generate more training data, both not-car and car images, from the course video. This helps the SVM training algorithm better recoganize the signals in the videos. Combining with initial data sets from Udacity, totally my training data contains 8877 cars and 10396 not-cars images.
+
 ---
 
 ## Video Implementation
 The final video is available in [this github link (project_video.mp4)](https://github.com/garygangwu/vehicle-detection/blob/master/output_videos/project_video.mp4)
 
+Here is the youtube link
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=5jJTe8nzIkI" target="_blank"><img src="http://img.youtube.com/vi/5jJTe8nzIkI/0.jpg" alt="Project Video" width="240" height="180" border="10" /></a>
+
+
 ---
 
 ## Discussion
 
-* The stability and tightness of the bounding boxes may need more improvements. It will require further exploration of hyperparameters or more training data to improve the prediction accurancy.
+* The stability and tightness of the bounding boxes could have further improvements. It will require keeping exploration of hyperparameters or more training data to improve the prediction accurancy.
 * The performance is a concern. Using SVM classifier takes a quite while for processing each image. The further performance tuning may be needed to apply this approach into the production. 
 * Yolo v2 and Fast R-CNN are the most popular deep learning approaches for object detection. The performance is reasonable fast. So they might be better alternatives to the traditional SVM classifier.
