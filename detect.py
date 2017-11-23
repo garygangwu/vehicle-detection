@@ -23,21 +23,25 @@ def load_svc_models():
 
 
 output_fold = 'output_videos/'
+debug_mode = True
 x = 0
 def save_fig(name, image):
+  if not debug_mode:
+    return
+
   global x
   if '0_' in name:
     x += 1
   filename = output_fold + name + '_' + str(x) + '.jpg'
-  #scipy.misc.imsave(filename, image)
+  scipy.misc.imsave(filename, image)
 
 
 def process_image_v1(model_profile, image, debug = False):
 
-  x_start_stop=[640, 1280]
+  x_start_stop=[None, None]
   y_start_stop0, y_start_stop1, y_start_stop2, y_start_stop3, y_start_stop4= \
     [390, 650], [390, 650], [390, 550], [360, 500], [360, 470]
-  windows_0 = slide_window(image, x_start_stop=[900, 1280], y_start_stop=y_start_stop0,
+  windows_0 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop0,
                         xy_window=(256, 256), xy_overlap=(0.9, 0.9))
   windows_1 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop1,
                         xy_window=(144, 144), xy_overlap=(0.9, 0.9))
@@ -45,9 +49,7 @@ def process_image_v1(model_profile, image, debug = False):
                         xy_window=(96, 96), xy_overlap=(0.9, 0.9))
   windows_3 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop3,
                         xy_window=(72, 72), xy_overlap=(0.9, 0.9))
-  windows_4 = slide_window(image, x_start_stop=[800, 1100], y_start_stop=y_start_stop3,
-                        xy_window=(64, 64), xy_overlap=(0.9, 0.9))
-  windows = windows_0 + windows_1 + windows_2 + windows_3 + windows_4
+  windows = windows_0 + windows_1 + windows_2 + windows_3
 
   hot_windows = search_windows(image, windows,
                                model_profile['model'],
@@ -81,7 +83,8 @@ def process_image_v1(model_profile, image, debug = False):
   return draw_img
 
 
-def process_image_v2(model_profile, image, debug = False):
+# Not used in the production
+def process_image_v2_deprecated(model_profile, image, debug = False):
   y_start_stop = [390, 645] # Min and max in y to search in slide_window()
   hot_windows = find_car_windows(image, y_start_stop[0], y_start_stop[1],
                                  model_profile['model'],
@@ -101,7 +104,7 @@ def process_image_v2(model_profile, image, debug = False):
 
 def evaluate(model_profile, image):
   draw_img_1, heatmap_1, hot_windows_1 = process_image_v1(model_profile, image, debug = True)
-  #draw_img_2, heatmap_2, hot_windows_2 = process_image_v2(model_profile, image, debug = True)
+  #draw_img_2, heatmap_2, hot_windows_2 = process_image_v2_deprecated(model_profile, image, debug = True)
 
   fig = plt.figure(figsize=(18, 4))
   plt.subplot(131)
