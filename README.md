@@ -109,9 +109,9 @@ I break the image into 4 sections on Y axis: [390, 650], [390, 650], [390, 550],
 1. To minimize the false positive, I <b>filtered out the postive prediction with low confidence scores</b> by calling `svc.decision_function`. Empirically, I set the threshold as 1.0.
 ```
 def model_prediction(svc, test_features):
-  scores = svc.decision_function(test_features)
   prediction = svc.predict(test_features)
   if prediction == 1:
+    scores = svc.decision_function(test_features)
     return scores[0] > PREDICTION_THRESH
   return 0
 ```
