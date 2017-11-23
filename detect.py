@@ -49,7 +49,9 @@ def process_image_v1(model_profile, image, debug = False):
                         xy_window=(96, 96), xy_overlap=(0.9, 0.9))
   windows_3 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop3,
                         xy_window=(72, 72), xy_overlap=(0.9, 0.9))
-  windows = windows_0 + windows_1 + windows_2 + windows_3
+  windows_4 = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop4,
+                        xy_window=(64, 64), xy_overlap=(0.9, 0.9))
+  windows = windows_0 + windows_1 + windows_2 + windows_3 + windows_4
 
   hot_windows = search_windows(image, windows,
                                model_profile['model'],
